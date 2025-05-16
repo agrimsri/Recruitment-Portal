@@ -6,6 +6,8 @@ from app.utils import assign_role
 from svix.webhooks import Webhook, WebhookVerificationError
 import os
 from dotenv import load_dotenv
+from clerk_backend_api import Clerk
+from app.config import config_map
 
 load_dotenv()
 
@@ -41,7 +43,6 @@ class ClerkWebhook(Resource):
                 )
                 db.session.add(user)
                 db.session.commit()
-                assign_role(user_data['id'])  # Assign role based on Clerk metadata
             except KeyError as e:
                 current_app.logger.error(f"Missing data in user creation payload: {str(e)}")
                 return {'error': 'Invalid user data'}, 400
@@ -67,3 +68,32 @@ class ClerkWebhook(Resource):
                 db.session.commit()
                 
         return {'message': 'Webhook processed successfully'}, 200
+
+class UpdateMetadata(Resource):
+    def post(self):
+        """Update user metadata in the database"""
+        data = request.get_json()
+        
+        if not data or 'user_id' not in data:
+            return {'error': 'user_id is required'}, 400
+        
+        user_id = data['user_id']
+            
+        with Clerk(
+            bearer_auth=config_map['development'].CLERK_SECRET_KEY,
+        ) as clerk:
+        
+            user = clerk.users.get(user_id=user_id)
+
+            if user.unsafe_metadata.get("role") == "hr":
+                res = clerk.users.update_metadata(user_id=user_id, public_metadata={
+                    "role": "hr",
+                }, unsafe_metadata={
+                    "role": None,
+                })
+            else:
+                res = clerk.users.update_metadata(user_id=user_id, public_metadata={
+                    "role": "user",
+                }, unsafe_metadata={
+                    "role": None,
+                })

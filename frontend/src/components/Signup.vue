@@ -88,10 +88,16 @@
                 {{ loading ? "Signing up..." : "Sign up" }}
               </button>
             </div>
+
+            <div class="text-center mt-4">
+              <RouterLink to="/signin" class="text-primary hover:underline">
+                Already have an account? Sign in
+              </RouterLink>
+            </div>
           </form>
         </div>
 
-        <div v-else class="card bg-base-100 shadow-xl">
+        <!-- <div v-else class="card bg-base-100 shadow-xl">
           <form @submit.prevent="handleVerifyEmail" class="card-body">
             <div class="form-control">
               <label class="label" for="code">
@@ -126,7 +132,7 @@
               </button>
             </div>
           </form>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
@@ -158,6 +164,33 @@ const roleOptions = [
   { value: "hr", label: "HR" },
 ];
 
+const updateUserMetadata = async (userId) => {
+  try {
+    const response = await fetch(
+      `${import.meta.env.VITE_BACKEND_URL}/api/updateMetadata`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          user_id: userId,
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to update user metadata");
+    }
+
+    // Reload user to get updated metadata
+    await user.value.reload();
+  } catch (err) {
+    console.error("Error updating metadata:", err);
+    throw err;
+  }
+};
+
 const handleSubmit = async () => {
   if (!isLoaded.value) return;
 
@@ -170,9 +203,10 @@ const handleSubmit = async () => {
       emailAddress: emailAddress.value,
       password: password.value,
       unsafeMetadata: {
-        role: role.value,
+        role: role.value, // Set temporarily until backend updates it
       },
     });
+    console.log("Sign up response:", res);
 
     if (res.status !== "complete") {
       error.value = `Sign up status: ${res.status}`;
@@ -181,17 +215,20 @@ const handleSubmit = async () => {
 
     await setActive.value({ session: res.createdSessionId });
 
-    if (user.value) {
-      await user.value.reload();
+    try {
+      // Update metadata on backend and reload user
+      await updateUserMetadata(res.createdUserId);
+
+      // Route based on role
+      if (role.value === "hr") {
+        router.push("/hr-dashboard");
+      } else if (role.value === "user") {
+        router.push("/user-dashboard");
+      }
+    } catch (metadataError) {
+      console.error("Error updating metadata:", metadataError);
+      error.value = "Failed to set user role. Please contact support.";
     }
-
-    router.push("/dashboard");
-
-    // await signUp.value.prepareEmailAddressVerification({
-    //   strategy: "email_code",
-    // });
-
-    // pendingVerification.value = true;
   } catch (err) {
     console.error("Error during sign up:", err);
     error.value = err.message || "An error occurred during sign up";
@@ -200,29 +237,29 @@ const handleSubmit = async () => {
   }
 };
 
-const handleVerifyEmail = async () => {
-  if (!isLoaded.value) return;
+// const handleVerifyEmail = async () => {
+//   if (!isLoaded.value) return;
 
-  try {
-    loading.value = true;
-    error.value = "";
+//   try {
+//     loading.value = true;
+//     error.value = "";
 
-    const completeSignUp = await signUp.value.attemptEmailAddressVerification({
-      code: code.value,
-    });
+//     const completeSignUp = await signUp.value.attemptEmailAddressVerification({
+//       code: code.value,
+//     });
 
-    if (completeSignUp.status !== "complete") {
-      error.value = `Sign up status: ${completeSignUp.status}`;
-      return;
-    }
+//     if (completeSignUp.status !== "complete") {
+//       error.value = `Sign up status: ${completeSignUp.status}`;
+//       return;
+//     }
 
-    await setActive.value({ session: completeSignUp.createdSessionId });
-    router.push("/dashboard");
-  } catch (err) {
-    console.error("Error during verification:", err);
-    error.value = err.message || "An error occurred during verification";
-  } finally {
-    loading.value = false;
-  }
-};
+//     await setActive.value({ session: completeSignUp.createdSessionId });
+//     router.push("/dashboard");
+//   } catch (err) {
+//     console.error("Error during verification:", err);
+//     error.value = err.message || "An error occurred during verification";
+//   } finally {
+//     loading.value = false;
+//   }
+// };
 </script>
