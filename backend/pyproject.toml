@@ -1,0 +1,17 @@
+[project]
+name = "backend"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "flask>=3.1.0",
+    "python-dotenv>=1.1.0",
+    "sqlalchemy>=2.0.40",
+    "flask-cors>=4.0.0",
+    "flask-restful>=0.3.10",
+    "flask-sqlalchemy>=3.1.1",
+    "requests>=2.32.3",
+    "clerk-backend-api>=2.2.0",
+    "svix>=1.65.0",
+]
