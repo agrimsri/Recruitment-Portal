@@ -1,8 +1,6 @@
-// src/router/index.ts
+// src/router/index.js
 import { createRouter, createWebHistory } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
-import { useAuth } from "@clerk/vue";
-import { useUser } from "@clerk/vue";
 import LandingView from "@/views/LandingView.vue";
 
 export const routes = [
@@ -39,24 +37,35 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to) => {
-  const { isSignedIn } = useAuth();
-  const { user } = useUser();
+  const auth = useAuthStore();
 
-  // If route requires auth and user is not signed in
-  if (to.meta.requiresAuth && !isSignedIn.value) {
+  // Wait for auth store to initialize
+  await auth.waitForInitialization();
+
+  // Allow access to non-auth routes
+  if (!to.meta.requiresAuth) {
+    return;
+  }
+
+  // Redirect to signin if not authenticated
+  if (!auth.isAuthenticated) {
     return { path: "/signin" };
   }
 
-  // If route has a role requirement and user's role doesn't match
-  if (to.meta.role && user.value?.publicMetadata?.role !== to.meta.role) {
-    // Redirect to appropriate dashboard based on user's role
-    const userRole = user.value?.publicMetadata?.role;
-    if (userRole === "hr") {
-      return { path: "/hr-dashboard" };
-    } else if (userRole === "user") {
-      return { path: "/user-dashboard" };
+  // Handle role-based access
+  const userRole = auth.userRole;
+
+  // If route requires specific role and user's role doesn't match
+  if (to.meta.role && userRole !== to.meta.role) {
+    // Redirect to appropriate dashboard based on role
+    switch (userRole) {
+      case "hr":
+        return { path: "/hr-dashboard" };
+      case "user":
+        return { path: "/user-dashboard" };
+      default:
+        return { path: "/" };
     }
-    return { path: "/" };
   }
 });
 
