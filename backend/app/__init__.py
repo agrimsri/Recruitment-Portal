@@ -6,9 +6,8 @@ from .config import config_map
 
 load_dotenv()
 from .extensions import db, api
-from .models.todo import Todo
-from .models.user import User
-from .resources.todo import TodoList, TodoItem
+from .models import *
+from . import resources
 
 def create_app(config_name=None):
     app = Flask(__name__, instance_relative_config=False)
@@ -19,12 +18,9 @@ def create_app(config_name=None):
     db.init_app(app)
     CORS(app, resources={r"/api/*": {"origins": "*"}})
     
-    # Initialize API and add resources
-    from .resources.webhooks import ClerkWebhook, UpdateMetadata
-    api.add_resource(TodoList, '/api/todos')
-    api.add_resource(TodoItem, '/api/todos/<int:todo_id>')
-    api.add_resource(ClerkWebhook, '/api/webhooks/clerk/user')
-    api.add_resource(UpdateMetadata, '/api/updateMetadata')
+    # Initialize API and register resources
+    from .resources import init_resources
+    init_resources(api)
     api.init_app(app)
 
     # Create database tables

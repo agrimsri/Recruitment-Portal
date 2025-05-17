@@ -14,4 +14,6 @@ dependencies = [
     "requests>=2.32.3",
     "clerk-backend-api>=2.2.0",
     "svix>=1.65.0",
+    "pyjwt>=2.10.1",
+    "cryptography>=44.0.3",
 ]

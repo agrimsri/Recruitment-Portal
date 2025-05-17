@@ -2,7 +2,6 @@ from flask_restful import Resource
 from flask import request, current_app
 from app.models.user import User
 from app.extensions import db
-from app.utils import assign_role
 from svix.webhooks import Webhook, WebhookVerificationError
 import os
 from dotenv import load_dotenv
