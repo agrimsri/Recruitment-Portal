@@ -7,7 +7,7 @@ from .config import config_map
 load_dotenv()
 from .extensions import db, api
 from .models import *
-from . import resources
+from .resources import init_resources
 
 def create_app(config_name=None):
     app = Flask(__name__, instance_relative_config=False)
@@ -19,7 +19,6 @@ def create_app(config_name=None):
     CORS(app, resources={r"/api/*": {"origins": "*"}})
     
     # Initialize API and register resources
-    from .resources import init_resources
     init_resources(api)
     api.init_app(app)
 

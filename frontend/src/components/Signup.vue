@@ -151,8 +151,7 @@ const { user } = useUser();
 const username = ref("");
 const emailAddress = ref("");
 const password = ref("");
-const role = ref("user");
-const code = ref("");
+const role = ref("candidate");
 
 // UI state
 const pendingVerification = ref(false);
@@ -160,8 +159,8 @@ const error = ref("");
 const loading = ref(false);
 
 const roleOptions = [
-  { value: "user", label: "User" },
-  { value: "hr", label: "HR" },
+  { value: "candidate", label: "Candidate" },
+  { value: "recruiter", label: "Recruiter" },
 ];
 
 const updateUserMetadata = async (userId) => {
@@ -185,6 +184,7 @@ const updateUserMetadata = async (userId) => {
 
     // Reload user to get updated metadata
     await user.value.reload();
+    console.log(user.value);
   } catch (err) {
     console.error("Error updating metadata:", err);
     throw err;
@@ -218,12 +218,14 @@ const handleSubmit = async () => {
     try {
       // Update metadata on backend and reload user
       await updateUserMetadata(res.createdUserId);
+      await user.value.reload();
 
       // Route based on role
-      if (role.value === "hr") {
-        router.push("/hr-dashboard");
-      } else if (role.value === "user") {
-        router.push("/user-dashboard");
+      if (role.value === "recruiter") {
+        router.push("/recruiter-dashboard");
+      } else if (role.value === "candidate") {
+        console.log("Redirecting to candidate dashboard");
+        router.push("/candidate-dashboard");
       }
     } catch (metadataError) {
       console.error("Error updating metadata:", metadataError);

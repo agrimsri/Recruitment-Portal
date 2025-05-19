@@ -23,11 +23,11 @@
           class="menu menu-sm dropdown-content bg-base-100 rounded-box z-50 mt-3 w-52 p-2 shadow"
         >
           <SignedIn>
-            <li v-if="user?.publicMetadata?.role === 'hr'">
-              <RouterLink to="/hr-dashboard">Dashboard</RouterLink>
+            <li v-if="user?.publicMetadata?.role === 'recruiter'">
+              <RouterLink to="/recruiter-dashboard">Dashboard</RouterLink>
             </li>
-            <li v-if="user?.publicMetadata?.role === 'user'">
-              <RouterLink to="/user-dashboard">Dashboard</RouterLink>
+            <li v-if="user?.publicMetadata?.role === 'candidate'">
+              <RouterLink to="/candidate-dashboard">Dashboard</RouterLink>
             </li>
           </SignedIn>
         </ul>
@@ -38,11 +38,11 @@
     <div class="navbar-center hidden lg:flex">
       <ul class="menu menu-horizontal px-1">
         <SignedIn>
-          <li v-if="user?.publicMetadata?.role === 'hr'">
-            <RouterLink to="/hr-dashboard">Dashboard</RouterLink>
+          <li v-if="user?.publicMetadata?.role === 'recruiter'">
+            <RouterLink to="/recruiter-dashboard">Dashboard</RouterLink>
           </li>
-          <li v-if="user?.publicMetadata?.role === 'user'">
-            <RouterLink to="/user-dashboard">Dashboard</RouterLink>
+          <li v-if="user?.publicMetadata?.role === 'candidate'">
+            <RouterLink to="/candidate-dashboard">Dashboard</RouterLink>
           </li>
         </SignedIn>
       </ul>

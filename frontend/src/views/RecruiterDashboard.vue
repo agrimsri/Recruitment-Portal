@@ -1,5 +1,5 @@
 <template>
-  <h1 class="text-7xl text-center">HR Dashboard</h1>
+  <h1 class="text-7xl text-center">Recruiter Dashboard</h1>
   <pre>{{ user }}</pre>
 </template>
 

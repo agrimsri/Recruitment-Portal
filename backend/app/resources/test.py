@@ -4,7 +4,7 @@ from app.utils import token_required, roles_accepted
 
 class Test(Resource):
     @token_required
-    @roles_accepted('hr')
+    @roles_accepted('recruiter')
     def get(self):
         auth_header = request.headers.get('Authorization', 'No Auth header')
         print(f"Headers: {dict(request.headers)}")

@@ -107,10 +107,10 @@ const handleSubmit = async () => {
 
       // Route based on user role
       const userRole = user.value?.publicMetadata?.role;
-      if (userRole === "hr") {
-        router.push("/hr-dashboard");
-      } else if (userRole === "user") {
-        router.push("/user-dashboard");
+      if (userRole === "recruiter") {
+        router.push("/recruiter-dashboard");
+      } else if (userRole === "candidate") {
+        router.push("/candidate-dashboard");
       } else {
         router.push("/dashboard");
       }

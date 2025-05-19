@@ -1,5 +1,5 @@
 <template>
-  <h1 class="text-7xl text-center">User Dashboard</h1>
+  <h1 class="text-7xl text-center">Candidate Dashboard</h1>
   <button
     @click="sendRequest"
     class="text-center btn btn-xs sm:btn-sm md:btn-md lg:btn-lg xl:btn-xl"
@@ -19,11 +19,15 @@ const msg = ref("Initial");
 
 const sendRequest = async () => {
   try {
+    console.log(await Clerk.session.getToken());
     const response = await fetch(
       `${import.meta.env.VITE_BACKEND_URL}/api/test`,
       {
         headers: {
-          Authorization: `Bearer ${await Clerk.session.getToken()}`,
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${await Clerk.session.getToken({
+            template: "develop",
+          })}`,
         },
       }
     );

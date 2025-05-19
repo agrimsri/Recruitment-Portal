@@ -38,10 +38,11 @@ class ClerkWebhook(Resource):
                 user = User(
                     clerk_id=user_data['id'],
                     email=user_data['email_addresses'][0]['email_address'],
-                    role=user_data['unsafe_metadata']['role'] if 'unsafe_metadata' in user_data and 'role' in user_data['unsafe_metadata'] else 'user',
+                    role=user_data['unsafe_metadata']['role'],
                 )
                 db.session.add(user)
                 db.session.commit()
+
             except KeyError as e:
                 current_app.logger.error(f"Missing data in user creation payload: {str(e)}")
                 return {'error': 'Invalid user data'}, 400
@@ -84,15 +85,15 @@ class UpdateMetadata(Resource):
         
             user = clerk.users.get(user_id=user_id)
 
-            if user.unsafe_metadata.get("role") == "hr":
+            if user.unsafe_metadata.get("role") == "recruiter":
                 res = clerk.users.update_metadata(user_id=user_id, public_metadata={
-                    "role": "hr",
+                    "role": "recruiter",
                 }, unsafe_metadata={
                     "role": None,
                 })
             else:
                 res = clerk.users.update_metadata(user_id=user_id, public_metadata={
-                    "role": "user",
+                    "role": "candidate",
                 }, unsafe_metadata={
                     "role": None,
                 })

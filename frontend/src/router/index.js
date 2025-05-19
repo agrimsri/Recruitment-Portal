@@ -6,16 +6,16 @@ import LandingView from "@/views/LandingView.vue";
 export const routes = [
   { path: "/", component: LandingView },
   {
-    path: "/hr-dashboard",
-    component: () => import("@/views/HrDashboard.vue"),
-    name: "HrDashboard",
-    meta: { requiresAuth: true, role: "hr" },
+    path: "/recruiter-dashboard",
+    component: () => import("@/views/RecruiterDashboard.vue"),
+    name: "RecruiterDashboard",
+    meta: { requiresAuth: true, role: "recruiter" },
   },
   {
-    path: "/user-dashboard",
-    component: () => import("@/views/UserDashboard.vue"),
-    name: "UserDashboard",
-    meta: { requiresAuth: true, role: "user" },
+    path: "/candidate-dashboard",
+    component: () => import("@/views/CandidateDashboard.vue"),
+    name: "CandidateDashboard",
+    meta: { requiresAuth: true, role: "candidate" },
   },
   {
     path: "/signup",
@@ -59,10 +59,10 @@ router.beforeEach(async (to) => {
   if (to.meta.role && userRole !== to.meta.role) {
     // Redirect to appropriate dashboard based on role
     switch (userRole) {
-      case "hr":
-        return { path: "/hr-dashboard" };
-      case "user":
-        return { path: "/user-dashboard" };
+      case "recruiter":
+        return { path: "/recruiter-dashboard" };
+      case "candidate":
+        return { path: "/candidate-dashboard" };
       default:
         return { path: "/" };
     }

@@ -9,8 +9,12 @@ class Job(db.Model):
     posted_by = db.Column(db.String(128), db.ForeignKey('user.clerk_id'), nullable=False)
     posted_at = db.Column(db.DateTime, default=datetime.now())
 
-    # Define relationship with User model
-    poster = db.relationship('User', backref=db.backref('jobs', lazy=True))
-
-    def __repr__(self):
-        return f'<Job {self.title}>'
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'title': self.title,
+            'description': self.description,
+            'location': self.location,
+            'posted_by': self.posted_by,
+            'posted_at': self.posted_at.isoformat()
+        }

@@ -65,7 +65,7 @@
           <div class="card bg-base-200 shadow-xl">
             <div class="card-body">
               <div class="text-4xl mb-4">📊</div>
-              <h3 class="card-title">HR Dashboard</h3>
+              <h3 class="card-title">Recruiter Dashboard</h3>
               <p>
                 Comprehensive analytics and tools for efficient candidate
                 evaluation and scheduling.
